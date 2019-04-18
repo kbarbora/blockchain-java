@@ -1,12 +1,8 @@
+package blockchain;
+
 import java.security.*;
 import java.util.Base64;
 import java.util.Date;
-import java.util.ArrayList;
-import java.util.List;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.Serializable;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 
@@ -20,18 +16,51 @@ public class Block{
     private SignedObject blockSigned;
 
 
+    public Block(int index, long timestamp, String previousHash, String data) throws NoSuchAlgorithmException, InvalidKeyException, IOException, SignatureException {
+        this.index = index;
+        this.timestamp = timestamp;
+        this.previousHash = previousHash;
+        this.data = data;
+        nonce = 0;
+        hash = calculateHash(this);
+    }
+
     public Block(int index, long timestamp, String previousHash, String data, PrivateKey prikey) throws NoSuchAlgorithmException, InvalidKeyException, IOException, SignatureException {
         this.index = index;
         this.timestamp = timestamp;
         this.previousHash = previousHash;
         this.data = data;
         nonce = 0;
-        hash = BlockHash.calculateHash(this);
+        hash = calculateHash(this);
         this.blockSigned = new SignedObject(hash, prikey, Signature.getInstance("SHA256withRSA") );
     }
 
     public String getSignature(){
         return Base64.getEncoder().encodeToString(blockSigned.getSignature());
+    }
+
+    public static String calculateHash(Block block) {
+        if (block != null) {
+            MessageDigest digest = null;
+
+            try {
+                digest = MessageDigest.getInstance("SHA-256");
+            } catch (NoSuchAlgorithmException e) {
+                return null;
+            }
+            String txt = block.str();
+            final byte bytes[] = digest.digest(txt.getBytes());
+            final StringBuilder builder = new StringBuilder();
+            for(final byte b : bytes) {
+                String hex = Integer.toHexString(0xff & b);
+                if(hex.length() == 1){
+                    builder.append('0');
+                }
+                builder.append(hex);
+            }
+            return builder.toString();
+        }
+        return null;
     }
 
     public String str() {
@@ -40,20 +69,21 @@ public class Block{
 
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Block #").append(index).append(" [previousHash: ").append(previousHash).append(", ").
+        builder.append("blockchain.Block #").append(index).append(" [previousHash: ").append(previousHash).append(", ").
                 append("timestamp : ").append(new Date(timestamp)).append(", ").append("data : ").append(data).append(", ").
                 append("hash : ").append(hash).append("]");
         return builder.toString();
     }
 
-
-    public void mineBlock(int difficulty){
+    public void mineBlock(int difficulty) {
         nonce = 0;
-        while(!getHash().substring(0, difficulty).equals(zeros(difficulty))){
+
+        while (!getHash().substring(0,  difficulty).equals(zeros(difficulty))) {
             nonce++;
-            hash = BlockHash.calculateHash(this);
+            hash = Block.calculateHash(this);
         }
     }
+
 
     public String zeros(int zeros){
         String zerosString = new String();
@@ -81,4 +111,6 @@ public class Block{
     public long getTimestamp() {
         return timestamp;
     }
+
+
 }
