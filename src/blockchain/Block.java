@@ -1,5 +1,7 @@
 package blockchain;
 
+import accessControl.Policy;
+
 import java.security.*;
 import java.util.Base64;
 import java.util.Date;
@@ -15,25 +17,34 @@ public class Block{
     private String previousHash;
     private List<Policy> policies;
     private List<Record> records;
-    private String data;
     private int nonce;
     private SignedObject blockSigned;
 
 
-    public Block(int index, long timestamp, String previousHash, String data) throws NoSuchAlgorithmException, InvalidKeyException, IOException, SignatureException {
+    public Block(int index, String previousHash)
+            throws NoSuchAlgorithmException, InvalidKeyException, IOException, SignatureException {
         this.index = index;
-        this.timestamp = timestamp;
+        this.timestamp = System.currentTimeMillis();
         this.previousHash = previousHash;
-        this.data = data;
         nonce = 0;
         hash = calculateHash(this);
     }
 
-    public Block(int index, long timestamp, String previousHash, String data, PrivateKey prikey) throws NoSuchAlgorithmException, InvalidKeyException, IOException, SignatureException {
+    public Block(int index, String previousHash, PrivateKey prikey, List<Policy> policies)
+            throws NoSuchAlgorithmException, InvalidKeyException, IOException, SignatureException {
         this.index = index;
-        this.timestamp = timestamp;
+        this.timestamp = System.currentTimeMillis();
         this.previousHash = previousHash;
-        this.data = data;
+        nonce = 0;
+        hash = calculateHash(this);
+        this.blockSigned = new SignedObject(hash, prikey, Signature.getInstance("SHA256withRSA") );
+    }
+
+    public Block(int index, String previousHash, PrivateKey prikey, List<Policy> policies, List<Record> records)
+            throws NoSuchAlgorithmException, InvalidKeyException, IOException, SignatureException {
+        this.index = index;
+        this.timestamp = System.currentTimeMillis();
+        this.previousHash = previousHash;
         nonce = 0;
         hash = calculateHash(this);
         this.blockSigned = new SignedObject(hash, prikey, Signature.getInstance("SHA256withRSA") );
@@ -67,21 +78,19 @@ public class Block{
         return null;
     }
 
-    public String str() {
-        return index + timestamp + previousHash + data + nonce;
+    public String str() { return index + timestamp + previousHash + nonce;
     }
 
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("blockchain.Block #").append(index).append(" [previousHash: ").append(previousHash).append(", ").
-                append("timestamp : ").append(new Date(timestamp)).append(", ").append("data : ").append(data).append(", ").
+                append("timestamp : ").append(new Date(timestamp)).append(", ").
                 append("hash : ").append(hash).append("]");
         return builder.toString();
     }
 
     public void mineBlock(int difficulty) {
         nonce = 0;
-
         while (!getHash().substring(0,  difficulty).equals(zeros(difficulty))) {
             nonce++;
             hash = Block.calculateHash(this);
@@ -94,10 +103,6 @@ public class Block{
         for( int i = 0; i < zeros; i++)
             zerosString += '0';
         return zerosString;
-    }
-
-    public String getData() {
-        return data;
     }
 
     public int getIndex() {

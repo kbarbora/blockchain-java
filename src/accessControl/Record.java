@@ -4,6 +4,7 @@ import blockchain.ConsensusLevel;
 
 import java.security.*;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.UUID;
 
 public class Record {
@@ -23,17 +24,14 @@ public class Record {
         this.consensus = consensus;
         this.location = location;
         this.pathFile = pathFile;
-        this.hash = calculateHash();
+        this.hash = calculateHash(str());
         this.signature = generateSignature(prk);
     }
 
-    private String calculateHash() throws NoSuchAlgorithmException{
-        if (id != null) {
-            MessageDigest digest = null;
-                digest = MessageDigest.getInstance("SHA-256");
-
-            String rec = str();
-            final byte bytes[] = digest.digest(rec.getBytes());
+    private static String calculateHash(String toHash) throws NoSuchAlgorithmException{
+            MessageDigest digest;
+            digest = MessageDigest.getInstance("SHA-256");
+            final byte bytes[] = digest.digest(toHash.getBytes());
             final StringBuilder builder = new StringBuilder();
             for(final byte b : bytes) {
                 String hex = Integer.toHexString(0xff & b);
@@ -43,8 +41,14 @@ public class Record {
                 builder.append(hex);
             }
             return builder.toString();
-        }
-        return null;
+    }
+
+    public static String getListHash(List<Record> records) throws NoSuchAlgorithmException {
+        String hashes = "";
+        ListIterator<Record> iter = records.listIterator();
+        while(iter.hasNext())
+            hashes += iter.next().getHash();
+        return calculateHash(hashes);
     }
 
     private String str(){
@@ -63,7 +67,7 @@ public class Record {
         signTimestamp = System.currentTimeMillis();
         Signature rsa = Signature.getInstance("SHA256withRSA");
         rsa.initSign(prk);
-        rsa.update(calculateHash().getBytes());
+        rsa.update(calculateHash(str()).getBytes());
         return rsa.sign();
     }
 

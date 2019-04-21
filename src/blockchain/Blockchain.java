@@ -1,8 +1,12 @@
 package blockchain;
 
+import accessControl.Policy;
+import accessControl.Record;
+
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +25,7 @@ public class Blockchain {
         // create the first block
         Block b = null;
         try {
-            b = new Block(0, System.currentTimeMillis(), null, "First blockchain.Block");
+            b = new Block(0, null);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (InvalidKeyException e) {
@@ -43,12 +47,12 @@ public class Blockchain {
         return blocks.get(blocks.size() - 1);
     }
 
-    public Block newBlock(String data) {
+    public Block newBlock(String data, PrivateKey prikey, List<Record> records, List<Policy> policies) {
         Block latestBlock = latestBlock();
         Block block = null;
         try {
-            block = new Block(latestBlock.getIndex() + 1, System.currentTimeMillis(),
-                    latestBlock.getHash(), data);
+            block = new Block(latestBlock.getIndex() + 1, latestBlock.getHash(),
+                    prikey, policies, records);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (InvalidKeyException e) {
