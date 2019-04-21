@@ -4,6 +4,8 @@ import java.security.*;
 import java.util.Base64;
 import java.util.Date;
 import java.io.IOException;
+import java.util.List;
+import accessControl.Record;
 
 
 public class Block{
@@ -11,6 +13,8 @@ public class Block{
     private long timestamp;
     private String hash;
     private String previousHash;
+    private List<Policy> policies;
+    private List<Record> records;
     private String data;
     private int nonce;
     private SignedObject blockSigned;

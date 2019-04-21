@@ -1,6 +1,7 @@
-package blockchain;
+package accessControl;
 
 import accessControl.Entity;
+import blockchain.GenerateKeys;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;

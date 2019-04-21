@@ -1,8 +1,8 @@
 package accessControl;
 
 import blockchain.PermissionLevel;
-import blockchain.ThirdEntity;
 
+import java.security.PrivateKey;
 import java.util.UUID;
 
 public class Policy {
@@ -11,6 +11,7 @@ public class Policy {
     private Record record;
     private UUID id;
     private PermissionLevel level;
+    private PrivateKey accessKey;
 
     public Policy(ThirdEntity entity, Record record, UUID id, PermissionLevel level) {
         this.entity = entity;
