@@ -20,9 +20,10 @@ public class GenerateKeys {
     public GenerateKeys(int keylength) throws NoSuchAlgorithmException, NoSuchProviderException {
         this.keyGen = KeyPairGenerator.getInstance("RSA");
         this.keyGen.initialize(keylength);
+        createKeys();
     }
 
-    public void createKeys() {
+    private void createKeys() {
         this.pair = this.keyGen.generateKeyPair();
         this.privateKey = pair.getPrivate();
         this.publicKey = pair.getPublic();

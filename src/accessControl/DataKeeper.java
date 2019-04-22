@@ -13,8 +13,8 @@ public class DataKeeper extends Entity {
     private PrivateKey prk;
     private PublicKey puk;
 
-    public DataKeeper(UUID id, String name){
-        super(id, name);
+    public DataKeeper( String name){
+        super(name);
         GenerateKeys gen = null;
         try {
             gen = new GenerateKeys(256);
@@ -23,7 +23,6 @@ public class DataKeeper extends Entity {
         } catch (NoSuchProviderException e) {
             e.printStackTrace();
         }
-        gen.createKeys();
         prk = gen.getPrivateKey();
         puk = gen.getPublicKey();
     }
