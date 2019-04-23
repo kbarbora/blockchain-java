@@ -23,18 +23,7 @@ public class Blockchain {
 
         blocks = new ArrayList<>();
         // create the first block
-        Block b = null;
-        try {
-            b = new Block(0, null);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SignatureException e) {
-            e.printStackTrace();
-        }
+        Block b = new Block(0, null);
         b.mineBlock(difficulty);
         blocks.add(b);
     }
@@ -47,7 +36,7 @@ public class Blockchain {
         return blocks.get(blocks.size() - 1);
     }
 
-    public Block newBlock(String data, PrivateKey prikey, List<Record> records, List<Policy> policies) {
+    public Block newBlock(PrivateKey prikey, List<Record> records, List<Policy> policies) {
         Block latestBlock = latestBlock();
         Block block = null;
         try {

@@ -21,8 +21,7 @@ public class Block{
     private SignedObject blockSigned;
 
 
-    public Block(int index, String previousHash)
-            throws NoSuchAlgorithmException, InvalidKeyException, IOException, SignatureException {
+    public Block(int index, String previousHash) {
         this.index = index;
         this.timestamp = System.currentTimeMillis();
         this.previousHash = previousHash;
@@ -35,6 +34,7 @@ public class Block{
         this.index = index;
         this.timestamp = System.currentTimeMillis();
         this.previousHash = previousHash;
+        this.policies = policies;
         nonce = 0;
         hash = calculateHash(this);
         this.blockSigned = new SignedObject(hash, prikey, Signature.getInstance("SHA256withRSA") );
@@ -45,6 +45,8 @@ public class Block{
         this.index = index;
         this.timestamp = System.currentTimeMillis();
         this.previousHash = previousHash;
+        this.policies = policies;
+        this.records = records;
         nonce = 0;
         hash = calculateHash(this);
         this.blockSigned = new SignedObject(hash, prikey, Signature.getInstance("SHA256withRSA") );
@@ -78,7 +80,8 @@ public class Block{
         return null;
     }
 
-    public String str() { return index + timestamp + previousHash + nonce;
+    public String str() {
+        return index + timestamp + previousHash + nonce;
     }
 
     public String toString() {
@@ -96,7 +99,6 @@ public class Block{
             hash = Block.calculateHash(this);
         }
     }
-
 
     public String zeros(int zeros){
         String zerosString = new String();

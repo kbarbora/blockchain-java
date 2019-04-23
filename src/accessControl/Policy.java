@@ -13,10 +13,10 @@ public class Policy {
     private PermissionLevel level;
     private PrivateKey accessKey;
 
-    public Policy(ThirdEntity entity, Record record, UUID id, PermissionLevel level) {
+    public Policy(ThirdEntity entity, Record record, PermissionLevel level) {
         this.entity = entity;
         this.record = record;
-        this.id = id;
+        this.id = UUID.randomUUID();
         this.level = level;
     }
 
@@ -24,8 +24,18 @@ public class Policy {
         return entity;
     }
 
-    public Record getRecord() {
-        return record;
+    public Record getRecord() throws NotEnoughPermission {
+        if(level == PermissionLevel.WRITE){
+            throw new NotEnoughPermission();
+        }
+        return this.record;
+    }
+
+    public void setRecord(Record record) throws NotEnoughPermission {
+        if(level == PermissionLevel.READ) {
+            throw new NotEnoughPermission();
+        }
+            this.record = record;
     }
 
     public UUID getId() {
@@ -34,5 +44,11 @@ public class Policy {
 
     public PermissionLevel getLevel() {
         return level;
+    }
+
+    public class NotEnoughPermission extends Exception {
+        public NotEnoughPermission(){
+            super("Bad permission level");
+        }
     }
 }

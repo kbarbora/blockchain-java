@@ -17,8 +17,9 @@ public class Record {
     private String pathFile;
     private byte[] signature;
     private long signTimestamp;
+    private String data;
 
-    public Record(List<DataKeeper> list, ConsensusLevel consensus, String location, String pathFile, PrivateKey prk) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException{
+    public Record(List<DataKeeper> list, ConsensusLevel consensus, String location, String pathFile, String data, PrivateKey prk) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException{
         keepers = list;
         this.id = UUID.randomUUID();
         this.consensus = consensus;
@@ -26,6 +27,7 @@ public class Record {
         this.pathFile = pathFile;
         this.hash = calculateHash(str());
         this.signature = generateSignature(prk);
+        this.data = data;
     }
 
     private static String calculateHash(String toHash) throws NoSuchAlgorithmException{
@@ -71,6 +73,10 @@ public class Record {
         return rsa.sign();
     }
 
+    public String getData() {
+        return data;
+    }
+
     public String getHash() {
         return hash;
     }
@@ -85,5 +91,9 @@ public class Record {
 
     public UUID getId() {
         return id;
+    }
+
+    public void setData(String s) {
+        this.data = s;
     }
 }

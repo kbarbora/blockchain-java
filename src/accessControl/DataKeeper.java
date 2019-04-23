@@ -17,7 +17,7 @@ public class DataKeeper extends Entity {
         super(name);
         GenerateKeys gen = null;
         try {
-            gen = new GenerateKeys(256);
+            gen = new GenerateKeys(1024);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (NoSuchProviderException e) {
